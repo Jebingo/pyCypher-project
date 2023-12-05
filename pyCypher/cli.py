@@ -18,12 +18,12 @@ def parse_arguments():
     parser.add_argument('-v', '--version', action='version')
 
     parser.add_argument('file_path', metavar='FILE_PATH', nargs='?',
-                        default='.', help='Specify path to file for encryption or decryption')
+                        default='.', help='specify path to file for encryption or decryption')
 
     parser.add_argument('-e', '--encrypt',
-                        action='store_true', help='Encrypt the file')
+                        action='store_true', help='encrypt the file')
     parser.add_argument('-d', '--decrypt',
-                        action='store_true', help='Decrypt the file')
+                        action='store_true', help='decrypt the file')
 
     return parser.parse_args()
 
