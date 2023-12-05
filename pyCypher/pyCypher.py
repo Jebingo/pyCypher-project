@@ -3,6 +3,7 @@
 """Module providing pyCypher main funcionality"""
 
 import os
+import pathlib
 from cryptography.fernet import Fernet
 
 
@@ -15,19 +16,20 @@ EXT_NEW = '.cyp'
 
 
 class Cypher:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, file_path: str) -> None:
+        self._file_path = pathlib.Path(file_path)
+        self._file_name = self._file_path.stem
+        self._file_ext = self._file_path.suffix
 
-    def encrypt_file(self, file_path: str) -> int:
+    def encrypt_file(self) -> int:
         # load first n bytes of file and flag
-        with open(file_path, 'rb') as file:
+        with open(self._file_path, 'rb') as file:
             raw_bytes = file.read(N_BYTES)
             file.seek(-len(FLAG), 2)
             flag = file.read(len(FLAG))
 
         # if flag match return
         if flag == FLAG:
-            # print('File already encrypted')
             return -1
 
         # generate key
@@ -35,18 +37,15 @@ class Cypher:
         cypher_suite = Fernet(key)
 
         # get the file extension and ensure that its 10 bytes long
-        file_split = file_path.split('.')
-        file_name = file_split[0]
-        extension = file_split[len(file_split) - 1]
-        extension = bytes(extension, 'utf-8') + \
-            bytes([0] * (EXT_LENGTH - len(extension)))
+        extension = bytes(self._file_ext, 'utf-8') + \
+            bytes([0] * (EXT_LENGTH - len(self._file_ext)))
 
         # encrypt raw bytes and separate them from token
         encrypted_bytes = cypher_suite.encrypt(raw_bytes)
         token = encrypted_bytes[N_BYTES:]
         encrypted_bytes = encrypted_bytes[:N_BYTES]
 
-        with open(file_path, 'r+b') as file:
+        with open(self._file_path, 'r+b') as file:
             # set pointer to the start of file and write encrypted bytes
             file.seek(0)
             file.write(encrypted_bytes)
@@ -58,14 +57,14 @@ class Cypher:
             file.write(FLAG)
 
         # change the extension
-        os.rename(file_path, file_name + EXT_NEW)
+        os.rename(self._file_path, self._file_name + EXT_NEW)
         return 0
 
-    def decrypt_file(self, file_path: str) -> int:
-        with open(file_path, 'rb') as file:
+    def decrypt_file(self) -> int:
+        with open(self._file_path, 'rb') as file:
             # load encrypted bytes
             encrypted_bytes = file.read(N_BYTES)
-            # load token and key
+            # load token, key and original extension
             file.seek(-KEY_LENGTH - TOKEN_LENGTH - EXT_LENGTH - len(FLAG), 2)
             token = file.read(TOKEN_LENGTH)
             key = file.read(KEY_LENGTH)
@@ -75,13 +74,12 @@ class Cypher:
         try:
             cypher_suite = Fernet(key)
         except:
-            # print('File already decrypted')
             return -1
 
         # decrypt bytes
         decrypted_bytes = cypher_suite.decrypt(encrypted_bytes + token)
 
-        with open(file_path, 'r+b') as file:
+        with open(self._file_path, 'r+b') as file:
             # set pointer to the start of file and write decrypted bytes
             file.seek(0)
             file.write(decrypted_bytes)
@@ -90,7 +88,6 @@ class Cypher:
             file.truncate()
 
         # change the extension back
-        file_name = file_path.split('.')[0]
         extension = extension.replace(b'\x00', b'')
-        os.rename(file_path, file_name + '.' + extension.decode())
+        os.rename(self._file_path, self._file_name + extension.decode())
         return 0
