@@ -4,7 +4,6 @@
 
 import sys
 import argparse
-import pathlib
 
 from . import __version__
 from .pycypher import Cypher
@@ -30,30 +29,13 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    path = pathlib.Path(args.path)
 
-    # cypher = Cypher(path)
+    cypher = Cypher(args.path)
 
-    if path.is_file():
-        if args.encrypt:
-            # cypher.encrypt_file()
-            print(f'encrypt file {path}')
-        elif args.decrypt:
-            # cypher.decrypt_file()
-            print(f'decrypt file {path}')
-        else:
-            print('Please specify whether to encrypt or decrypt')
-            sys.exit()
-    elif path.is_dir():
-        if args.encrypt:
-            # cypher.encrypt_file()
-            print(f'encrypt folder {path}')
-        elif args.decrypt:
-            # cypher.decrypt_file()
-            print(f'decrypt folder {path}')
-        else:
-            print('Please specify whether to encrypt or decrypt')
-            sys.exit()
+    if args.encrypt:
+        cypher.encrypt()
+    elif args.decrypt:
+        cypher.decrypt()
     else:
-        print('Path does not exist')
+        print('Please specify whether to encrypt or decrypt')
         sys.exit()
