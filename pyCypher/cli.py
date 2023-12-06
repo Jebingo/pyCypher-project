@@ -1,47 +1,59 @@
 # cli.py
 
-"""Module providing pyCypher CLI funcionality"""
+"""Module providing pycypher CLI funcionality"""
 
 import sys
 import argparse
 import pathlib
 
 from . import __version__
-from .pyCypher import Cypher
+from .pycypher import Cypher
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        prog='cypher', description='Encrypt/Decrypt file')
-    parser.version = f'pyCypher v{__version__}'
+        prog='cypher', description='Encrypt or decrypt file or all files in specified folder')
+    parser.version = f'pycypher v{__version__}'
 
     parser.add_argument('-v', '--version', action='version')
 
-    parser.add_argument('file_path', metavar='FILE_PATH', nargs='?',
-                        default='.', help='specify path to file for encryption or decryption')
+    parser.add_argument('path', metavar='PATH', nargs='?',
+                        default='.', help='specify path to file or folder')
 
     parser.add_argument('-e', '--encrypt',
-                        action='store_true', help='encrypt the file')
+                        action='store_true', help='encrypt file or folder')
     parser.add_argument('-d', '--decrypt',
-                        action='store_true', help='decrypt the file')
+                        action='store_true', help='decrypt file or folder')
 
     return parser.parse_args()
 
 
 def main():
     args = parse_arguments()
-    file_path = pathlib.Path(args.file_path)
+    path = pathlib.Path(args.path)
 
-    if not file_path.is_file():
-        print('The specified file does not exist')
-        sys.exit()
+    # cypher = Cypher(path)
 
-    cypher = Cypher(file_path)
-
-    if args.encrypt:
-        cypher.encrypt_file()
-    elif args.decrypt:
-        cypher.decrypt_file()
+    if path.is_file():
+        if args.encrypt:
+            # cypher.encrypt_file()
+            print(f'encrypt file {path}')
+        elif args.decrypt:
+            # cypher.decrypt_file()
+            print(f'decrypt file {path}')
+        else:
+            print('Please specify whether to encrypt or decrypt')
+            sys.exit()
+    elif path.is_dir():
+        if args.encrypt:
+            # cypher.encrypt_file()
+            print(f'encrypt folder {path}')
+        elif args.decrypt:
+            # cypher.decrypt_file()
+            print(f'decrypt folder {path}')
+        else:
+            print('Please specify whether to encrypt or decrypt')
+            sys.exit()
     else:
-        print('Please specify either -e or -d option')
+        print('Path does not exist')
         sys.exit()

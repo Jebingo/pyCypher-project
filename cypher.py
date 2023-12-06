@@ -3,7 +3,7 @@
 
 """Module providing pyCypher entry point"""
 
-from pyCypher.cli import main
+from pycypher.cli import main
 
 if __name__ == '__main__':
     main()

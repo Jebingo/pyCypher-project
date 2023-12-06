@@ -1,4 +1,4 @@
-# pyCypher.py
+# pycypher.py
 
 """Module providing pyCypher main funcionality"""
 
