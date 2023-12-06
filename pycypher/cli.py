@@ -4,7 +4,6 @@
 
 import sys
 import argparse
-import pathlib
 
 from . import __version__
 from .pycypher import Cypher
