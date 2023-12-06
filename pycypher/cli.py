@@ -17,7 +17,7 @@ def parse_arguments():
     parser.add_argument('-v', '--version', action='version')
 
     parser.add_argument('path', metavar='PATH', nargs='?',
-                        default='.', help='specify path to file or folder')
+                        default='.', help='specify path to file or folder the default is ./')
 
     parser.add_argument('-e', '--encrypt',
                         action='store_true', help='encrypt file or folder')
