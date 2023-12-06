@@ -16,14 +16,46 @@ EXT_NEW = '.cyp'
 
 
 class Cypher:
-    def __init__(self, file_path: str) -> None:
-        self._file_path = pathlib.Path(file_path)
-        self._file_name = self._file_path.stem
-        self._file_ext = self._file_path.suffix
+    def __init__(self, path: str) -> None:
+        self._path = pathlib.Path(path)
 
-    def encrypt_file(self) -> int:
+    def encrypt(self) -> int:
+        if self._path.is_file():
+            print(f'encrypt file {self._path}')
+            # return self.encrypt_file(self._path)
+        elif self._path.is_dir():
+            print(f'encrypt folder {self._path}')
+            return self.encrypt_folder()
+        else:
+            return -1
+
+    def decrypt(self) -> int:
+        if self._path.is_file():
+            print(f'decrypt file {self._path}')
+            # return self.decrypt_file(self._path)
+        elif self._path.is_dir():
+            print(f'decrypt folder {self._path}')
+            # return self.decrypt_folder(self._path)
+        else:
+            return -1
+
+    def encrypt_folder(self) -> int:
+        for file in list(self._path.glob('*')):
+            if file.is_file():
+                self.encrypt_file(file)
+        return 0
+
+    def decrypt_folder(self) -> int:
+        print(self._files)
+        return 0
+
+    def encrypt_file(self, file_path) -> int:
+        file_path = pathlib.Path(file_path)
+        print(file_path)
+        self._file_name = file_path.stem
+        self._file_ext = file_path.suffix
         # load first n bytes of file and flag
-        with open(self._file_path, 'rb') as file:
+        with open(file_path, 'rb') as file:
             raw_bytes = file.read(N_BYTES)
             file.seek(-len(FLAG), 2)
             flag = file.read(len(FLAG))
@@ -45,7 +77,7 @@ class Cypher:
         token = encrypted_bytes[N_BYTES:]
         encrypted_bytes = encrypted_bytes[:N_BYTES]
 
-        with open(self._file_path, 'r+b') as file:
+        with open(file_path, 'r+b') as file:
             # set pointer to the start of file and write encrypted bytes
             file.seek(0)
             file.write(encrypted_bytes)
@@ -57,11 +89,13 @@ class Cypher:
             file.write(FLAG)
 
         # change the extension
-        os.rename(self._file_path, self._file_name + EXT_NEW)
+        os.rename(file_path, self._file_name + EXT_NEW)
         return 0
 
     def decrypt_file(self) -> int:
-        with open(self._file_path, 'rb') as file:
+        self._file_name = self._path.stem
+        self._file_ext = self._path.suffix
+        with open(self._path, 'rb') as file:
             # load encrypted bytes
             encrypted_bytes = file.read(N_BYTES)
             # load token, key and original extension
@@ -79,7 +113,7 @@ class Cypher:
         # decrypt bytes
         decrypted_bytes = cypher_suite.decrypt(encrypted_bytes + token)
 
-        with open(self._file_path, 'r+b') as file:
+        with open(self._path, 'r+b') as file:
             # set pointer to the start of file and write decrypted bytes
             file.seek(0)
             file.write(decrypted_bytes)
@@ -89,5 +123,5 @@ class Cypher:
 
         # change the extension back
         extension = extension.replace(b'\x00', b'')
-        os.rename(self._file_path, self._file_name + extension.decode())
+        os.rename(self._path, self._file_name + extension.decode())
         return 0
