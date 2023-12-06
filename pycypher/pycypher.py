@@ -1,6 +1,6 @@
 # pycypher.py
 
-"""Module providing pyCypher main funcionality"""
+"""Module providing pycypher main funcionality"""
 
 import os
 import pathlib
