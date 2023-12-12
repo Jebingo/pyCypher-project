@@ -11,6 +11,7 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+For information about usage use:
 ```
 python cypher.py --help
 ```
