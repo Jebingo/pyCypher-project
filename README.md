@@ -1,7 +1,7 @@
 # Cypher 🔐
 CLI app that can encrypt or decrypt files.
 
-It uses Fernet from cryptography package for encrypting and decrypting files.
+It uses Fernet from cryptography library.
 
 It only encrypts first 100 bytes of file and then it stores key and other information to the end of the file for decryption later.
 
