@@ -7,6 +7,8 @@ It only encrypts first 100 bytes of file and then it stores key and other inform
 
 >⚠️Disclaimer: This is a demo project. Exercise caution when encrypting your files.
 
+---
+
 ### Install dependencies 📦
 ```
 pip install -r requirements.txt
