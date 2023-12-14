@@ -24,6 +24,6 @@ python cypher.py --help
 ---
 
 #### TODO 📝
-- let user specify extension of encrypted files
-- safeguards
-- threading
+- [ ] let user specify extension of encrypted files
+- [ ] safeguards
+- [ ] threading
